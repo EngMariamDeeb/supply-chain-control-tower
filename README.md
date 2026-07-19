@@ -32,6 +32,15 @@ SCCT/
 - Average lead time
 - Delayed shipments
 - Supplier reliability score
+## Key Results So Far
+Using the sample supply chain dataset, the project currently calculates the following KPIs:
+- **On-Time Delivery Rate:** 50.0%
+- **Fill Rate:** 89.2%
+- **Currently Delayed Orders:** 2
+- **Delivered Late:** 3
+
+These KPIs are calculated using **pandas** in a **Jupyter notebook**, with the KPI calculation logic organized in `src/kpis.py`.
+*Note: based on a small sample dataset (12 orders) created for learning purposes.*
 
 ## 👤 Author
 Mariam Deeb — Industrial Engineering student, building this project to develop practical skills in Python, SQL, and Power BI applied to supply chain analytics.
