@@ -21,10 +21,11 @@ In progress — **Phase 1: Python fundamentals applied to supply chain data**
 
 ## 📁 Repository Structure
 SCCT/
-├── data/         # Sample/simulated supply chain datasets (CSV)
-├── notebooks/    # Exploratory data analysis (Jupyter notebooks)
-├── src/          # Python scripts for data processing and KPI logic
-└── README.md     # Project documentation
+data/         # Sample/simulated supply chain datasets (CSV)
+notebooks/    # Exploratory data analysis (Jupyter notebooks)
+src/          # Python scripts for data processing and KPI logic
+README.md     # Project documentation
+
 ## 📊 Planned KPIs
 - On-time delivery rate
 - Fill rate
@@ -32,13 +33,13 @@ SCCT/
 - Average lead time
 - Delayed shipments
 - Supplier reliability score
+  
 ## Key Results So Far
 Using the sample supply chain dataset, the project currently calculates the following KPIs:
 - **On-Time Delivery Rate:** 50.0%
 - **Fill Rate:** 89.2%
 - **Currently Delayed Orders:** 2
 - **Delivered Late:** 3
-
 These KPIs are calculated using **pandas** in a **Jupyter notebook**, with the KPI calculation logic organized in `src/kpis.py`.
 *Note: based on a small sample dataset (12 orders) created for learning purposes.*
 

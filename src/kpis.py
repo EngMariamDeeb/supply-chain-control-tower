@@ -20,3 +20,5 @@ def count_currently_delayed(orders):
 def count_delivered_late(orders):
     delivered = orders[orders['order_status'] == 'Delivered']
     return (delivered['delivery_delay_days'] > 0).sum()
+
+
