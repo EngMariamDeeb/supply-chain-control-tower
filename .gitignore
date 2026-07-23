@@ -4,3 +4,6 @@ __pycache__/
 venv/
 .ipynb_checkpoints/
 .env
+data/suppliers.csv
+data/warehouses.csv
+data/orders.csv
