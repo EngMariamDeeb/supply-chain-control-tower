@@ -19,6 +19,11 @@ LEAD_TIME_RANGES = {
     "Regional": (6, 10),
     "International": (12, 20),
 }
+REFERENCE_TODAY = date(2026, 7, 1)
+CANCELLATION_BASELINE = 0.03
+MAX_EXTRA_CANCELLATION_RISK = 0.15
+MAX_EXTRA_DELAY_DAYS = 15
+
 
 def generate_suppliers():
     suppliers = []
@@ -89,10 +94,28 @@ def generate_order_date():
 
 
 def generate_expected_delivery_date(order_date, destination):
-    """Add a destination-dependent lead time to the order date."""
     min_days, max_days = LEAD_TIME_RANGES[destination]
     lead_time = random.randint(min_days, max_days)
     return order_date + timedelta(days=lead_time)
+
+
+def determine_order_outcome(expected_delivery_date, overall_delay_risk):
+    if expected_delivery_date.date() > REFERENCE_TODAY:
+        return "Pending", None
+
+    cancellation_chance = CANCELLATION_BASELINE + (overall_delay_risk * MAX_EXTRA_CANCELLATION_RISK)
+    if random.random() < cancellation_chance:
+        return "Cancelled", None
+
+    if random.random() < overall_delay_risk:
+        extra_days = round(overall_delay_risk * MAX_EXTRA_DELAY_DAYS)
+        extra_days = max(extra_days, 1)  
+        actual_date = expected_delivery_date + timedelta(days=extra_days)
+        return "Delayed", actual_date
+    else:
+        early_days = random.randint(0, 2)
+        actual_date = expected_delivery_date - timedelta(days=early_days)
+        return "Delivered", actual_date
 
 if __name__ == "__main__":
     suppliers_df = generate_suppliers()
@@ -117,8 +140,20 @@ if __name__ == "__main__":
         axis=1
     )
 
+    orders_df["order_date"] = pd.to_datetime(orders_df["order_date"])
+    orders_df["expected_delivery_date"] = pd.to_datetime(orders_df["expected_delivery_date"])
+
     orders_df["lead_time_days"] = (orders_df["expected_delivery_date"] - orders_df["order_date"]).dt.days
 
+    results = orders_df.apply(
+        lambda row: determine_order_outcome(row["expected_delivery_date"], row["overall_delay_risk"]),
+        axis=1
+    )
+    orders_df["order_status"] = results.apply(lambda r: r[0])
+    orders_df["actual_delivery_date"] = results.apply(lambda r: r[1])
+
+    print(orders_df["order_status"].value_counts())
+    print(orders_df[["expected_delivery_date", "overall_delay_risk", "order_status", "actual_delivery_date"]].head(15))
     print(orders_df[["order_date", "destination", "expected_delivery_date", "lead_time_days"]].head(10))
     print(orders_df.groupby("destination")["lead_time_days"].describe())
     print(orders_df.head(10))
