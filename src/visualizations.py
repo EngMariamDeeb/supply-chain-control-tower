@@ -1,4 +1,3 @@
-import pandas as pd
 import matplotlib.pyplot as plt
 
 def plot_on_time_vs_late(on_time_count, late_count):
@@ -9,4 +8,3 @@ def plot_on_time_vs_late(on_time_count, late_count):
     plt.xlabel('Delivery Status')
     plt.ylabel('Number of Orders')
     plt.show()
-    
