@@ -23,6 +23,11 @@ REFERENCE_TODAY = date(2026, 7, 1)
 CANCELLATION_BASELINE = 0.03
 MAX_EXTRA_CANCELLATION_RISK = 0.15
 MAX_EXTRA_DELAY_DAYS = 15
+QUANTITY_MIN = 5
+QUANTITY_MAX = 100
+SHORTFALL_PROBABILITY = 0.20
+SHORTFALL_MIN_PCT = 0.05
+SHORTFALL_MAX_PCT = 0.40
 
 
 def generate_suppliers():
@@ -117,6 +122,23 @@ def determine_order_outcome(expected_delivery_date, overall_delay_risk):
         actual_date = expected_delivery_date - timedelta(days=early_days)
         return "Delivered", actual_date
 
+
+def generate_quantity_ordered():
+    return random.randint(QUANTITY_MIN, QUANTITY_MAX)
+
+
+def generate_quantity_delivered(quantity_ordered, order_status):
+    if order_status not in ("Delivered", "Delayed"):
+        return None
+
+    if random.random() < SHORTFALL_PROBABILITY:
+        shortfall_pct = random.uniform(SHORTFALL_MIN_PCT, SHORTFALL_MAX_PCT)
+        shortfall_units = round(quantity_ordered * shortfall_pct)
+        return quantity_ordered - shortfall_units
+    else:
+        return quantity_ordered
+    
+
 if __name__ == "__main__":
     suppliers_df = generate_suppliers()
     warehouses_df = generate_warehouses()
@@ -152,9 +174,25 @@ if __name__ == "__main__":
     orders_df["order_status"] = results.apply(lambda r: r[0])
     orders_df["actual_delivery_date"] = results.apply(lambda r: r[1])
 
+    orders_df["quantity_ordered"] = [generate_quantity_ordered() for _ in range(len(orders_df))]
+    orders_df["quantity_delivered"] = orders_df.apply(
+        lambda row: generate_quantity_delivered(row["quantity_ordered"], row["order_status"]),
+        axis=1
+    )
+
+    print(orders_df[["order_status", "quantity_ordered", "quantity_delivered"]].head(15))
     print(orders_df["order_status"].value_counts())
     print(orders_df[["expected_delivery_date", "overall_delay_risk", "order_status", "actual_delivery_date"]].head(15))
     print(orders_df[["order_date", "destination", "expected_delivery_date", "lead_time_days"]].head(10))
     print(orders_df.groupby("destination")["lead_time_days"].describe())
     print(orders_df.head(10))
     print(orders_df["overall_delay_risk"].describe())
+
+    final_orders = orders_df[[
+        "order_id", "product_id", "customer_id", "supplier_id", "warehouse_id",
+        "destination", "quantity_ordered", "quantity_delivered",
+        "order_date", "expected_delivery_date", "actual_delivery_date", "order_status"
+    ]]
+
+    final_orders.to_csv(DATA_DIR / "orders.csv", index=False)
+    print(f"\nGenerated {len(final_orders)} orders and saved to {DATA_DIR / 'orders.csv'}")
