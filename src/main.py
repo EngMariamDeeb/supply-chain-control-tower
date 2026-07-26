@@ -11,28 +11,34 @@ from kpis import (
 )
 from visualizations import plot_on_time_vs_late
 
-# Load and clean the data
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = PROJECT_ROOT / "data" / "orders.csv"
 
-orders = load_orders(DATA_PATH)
-orders = clean_orders(orders)
 
-# KPIs
-on_time_rate = calculate_on_time_rate(orders)
-fill_rate = calculate_fill_rate(orders)
-currently_delayed = count_currently_delayed(orders)
-delivered_late = count_delivered_late(orders)
-on_time_count = count_on_time_delivered(orders)
+def run():
+    # Load and clean the data
+    orders = load_orders(DATA_PATH)
+    orders = clean_orders(orders)
 
-# Print summary
-on_time_str = f"{on_time_rate:.1f}%" if on_time_rate is not None else "N/A"
-fill_str = f"{fill_rate:.1f}%" if fill_rate is not None else "N/A"
+    # KPIs
+    on_time_rate = calculate_on_time_rate(orders)
+    fill_rate = calculate_fill_rate(orders)
+    currently_delayed = count_currently_delayed(orders)
+    delivered_late = count_delivered_late(orders)
+    on_time_count = count_on_time_delivered(orders)
 
-print(f"On-Time Delivery Rate: {on_time_str}")
-print(f"Fill Rate: {fill_str}")
-print(f"Currently Delayed: {currently_delayed}")
-print(f"Delivered Late: {delivered_late}")
+    # Print summary
+    on_time_str = f"{on_time_rate:.1f}%" if on_time_rate is not None else "N/A"
+    fill_str = f"{fill_rate:.1f}%" if fill_rate is not None else "N/A"
 
-# Chart
-plot_on_time_vs_late(on_time_count, delivered_late)
+    print(f"On-Time Delivery Rate: {on_time_str}")
+    print(f"Fill Rate: {fill_str}")
+    print(f"Currently Delayed: {currently_delayed}")
+    print(f"Delivered Late: {delivered_late}")
+
+    # Chart
+    plot_on_time_vs_late(on_time_count, delivered_late)
+
+
+if __name__ == "__main__":
+    run()
