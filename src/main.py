@@ -2,7 +2,7 @@ from pathlib import Path
 
 from data_loader import load_orders
 from data_cleaning import clean_orders
-from kpis import (
+from kpis.orders import (
     calculate_on_time_rate,
     calculate_fill_rate,
     count_currently_delayed,
