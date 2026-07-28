@@ -12,6 +12,20 @@ def calculate_supplier_reliability(orders):
     return summary
 
 
+def calculate_supplier_fill_rate(orders):
+    """Return a per-supplier breakdown of fill performance:
+    supplier_id, total quantity ordered, total quantity delivered, fill rate (%)"""
+    fulfilled = orders[orders['order_status'].isin(['Delivered', 'Delayed'])]
+
+    summary = fulfilled.groupby('supplier_id').agg(
+        total_ordered=('quantity_ordered', 'sum'),
+        total_delivered=('quantity_delivered', 'sum')
+    ).reset_index()
+
+    summary['fill_rate'] = (summary['total_delivered'] / summary['total_ordered']) * 100
+    return summary
+
+
 if __name__ == "__main__":
     from pathlib import Path
     import sys
@@ -24,3 +38,4 @@ if __name__ == "__main__":
     orders = clean_orders(orders)
 
     print(calculate_supplier_reliability(orders))
+    print(calculate_supplier_fill_rate(orders))
