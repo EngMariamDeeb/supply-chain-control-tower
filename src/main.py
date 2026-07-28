@@ -9,7 +9,13 @@ from kpis.orders import (
     count_delivered_late,
     count_on_time_delivered,
 )
-from visualizations import plot_on_time_vs_late
+from kpis.supplier import calculate_supplier_reliability
+from kpis.warehouse import calculate_warehouse_on_time_rate
+from visualizations import (
+    plot_on_time_vs_late,
+    plot_supplier_on_time_rate,
+    plot_warehouse_on_time_rate,
+)
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = PROJECT_ROOT / "data" / "orders.csv"
@@ -26,18 +32,24 @@ def run():
     currently_delayed = count_currently_delayed(orders)
     delivered_late = count_delivered_late(orders)
     on_time_count = count_on_time_delivered(orders)
+    supplier_summary = calculate_supplier_reliability(orders)
+    warehouse_summary = calculate_warehouse_on_time_rate(orders)
 
     # Print summary
     on_time_str = f"{on_time_rate:.1f}%" if on_time_rate is not None else "N/A"
     fill_str = f"{fill_rate:.1f}%" if fill_rate is not None else "N/A"
 
-    print(f"On-Time Delivery Rate: {on_time_str}")
-    print(f"Fill Rate: {fill_str}")
     print(f"Currently Delayed: {currently_delayed}")
     print(f"Delivered Late: {delivered_late}")
+    print("\nSupplier On-Time Summary:")
+    print(supplier_summary)
+    print("\nWarehouse On-Time Summary:")
+    print(warehouse_summary)
 
-    # Chart
+    # Charts
     plot_on_time_vs_late(on_time_count, delivered_late)
+    plot_supplier_on_time_rate(supplier_summary)
+    plot_warehouse_on_time_rate(warehouse_summary)
 
 
 if __name__ == "__main__":
