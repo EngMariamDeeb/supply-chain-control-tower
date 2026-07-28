@@ -3,6 +3,7 @@ from pathlib import Path
 from data_loader import load_orders
 from data_cleaning import clean_orders
 from kpis.orders import (
+    calculate_average_lead_time,
     calculate_on_time_rate,
     calculate_fill_rate,
     count_delivered_late,
@@ -26,6 +27,7 @@ def run():
     orders = clean_orders(orders)
 
     # KPIs
+    average_lead_time = calculate_average_lead_time(orders)
     on_time_rate = calculate_on_time_rate(orders)
     fill_rate = calculate_fill_rate(orders)
     delivered_late = count_delivered_late(orders)
@@ -34,9 +36,11 @@ def run():
     warehouse_summary = calculate_warehouse_on_time_rate(orders)
 
     # Print summary
+    average_lead_time_str = f"{average_lead_time:.1f} days" if average_lead_time is not None else "N/A"
     on_time_str = f"{on_time_rate:.1f}%" if on_time_rate is not None else "N/A"
     fill_str = f"{fill_rate:.1f}%" if fill_rate is not None else "N/A"
 
+    print(f"Average Lead Time: {average_lead_time_str}")
     print(f"On-Time Delivery Rate: {on_time_str}")
     print(f"Fill Rate: {fill_str}")
     print(f"Delivered Late: {delivered_late}")
