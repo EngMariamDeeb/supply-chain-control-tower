@@ -25,10 +25,6 @@ def calculate_fill_rate(orders):
     return (total_delivered_units / total_ordered) * 100
 
 
-def count_currently_delayed(orders):
-    return (orders['order_status'] == 'Delayed').sum()
-
-
 def count_delivered_late(orders):
     return (orders['order_status'] == 'Delayed').sum()
 
@@ -50,6 +46,5 @@ if __name__ == "__main__":
     print(f"Average Lead Time: {calculate_average_lead_time(orders):.1f} days")
     print(f"On-Time Rate: {calculate_on_time_rate(orders):.1f}%")
     print(f"Fill Rate: {calculate_fill_rate(orders):.1f}%")
-    print(f"Currently Delayed: {count_currently_delayed(orders)}")
     print(f"Delivered Late: {count_delivered_late(orders)}")
     print(f"On-Time Delivered: {count_on_time_delivered(orders)}")
