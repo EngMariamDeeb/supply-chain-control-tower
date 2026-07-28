@@ -5,7 +5,6 @@ from data_cleaning import clean_orders
 from kpis.orders import (
     calculate_on_time_rate,
     calculate_fill_rate,
-    count_currently_delayed,
     count_delivered_late,
     count_on_time_delivered,
 )
@@ -29,7 +28,6 @@ def run():
     # KPIs
     on_time_rate = calculate_on_time_rate(orders)
     fill_rate = calculate_fill_rate(orders)
-    currently_delayed = count_currently_delayed(orders)
     delivered_late = count_delivered_late(orders)
     on_time_count = count_on_time_delivered(orders)
     supplier_summary = calculate_supplier_reliability(orders)
@@ -39,7 +37,8 @@ def run():
     on_time_str = f"{on_time_rate:.1f}%" if on_time_rate is not None else "N/A"
     fill_str = f"{fill_rate:.1f}%" if fill_rate is not None else "N/A"
 
-    print(f"Currently Delayed: {currently_delayed}")
+    print(f"On-Time Delivery Rate: {on_time_str}")
+    print(f"Fill Rate: {fill_str}")
     print(f"Delivered Late: {delivered_late}")
     print("\nSupplier On-Time Summary:")
     print(supplier_summary)
